@@ -4,6 +4,12 @@ AllWeather.Fix 是一个面向长期 ETF 投资者的全球多资产动态再平
 
 界面风格参考 Apple 与 SpaceX：黑色背景、半透明玻璃卡片、真实地球视觉、冷白与钛灰文字，并通过原生 JavaScript 完成主要交互和计算逻辑。
 
+![AllWeather.Fix 项目预览](assets/preview.png)
+
+[在线静态 Demo](https://xiaoyecodes.github.io/AllWeather.Fix/) · [GitHub 仓库](https://github.com/XiaoyeCodes/AllWeather.Fix)
+
+> 在线 Demo 由 GitHub Pages 托管，适合预览界面、持仓计算、静态 K 线和本地 JSON 回测。AI 分析、实时市场情报抓取和缺失数据自动补全依赖 `server.js`，需要本地或 Node.js 服务端运行。
+
 > 本项目仅用于投资研究、策略学习和个人资产配置辅助，不构成任何投资建议、收益承诺或交易指令。
 
 ## 核心功能
@@ -270,6 +276,28 @@ node server.js
 - `/api/ai-analysis`
 
 要在 Cloudflare Pages 上保留完整功能，需要把 `server.js` 中的 API 逻辑改造成 Cloudflare Pages Functions 或 Cloudflare Workers。当前仓库版本以 Node.js 服务运行方式为准。
+
+### GitHub Pages Demo
+
+仓库包含 GitHub Pages 自动部署 workflow。推送到 `main` 后，GitHub Actions 会发布一个静态演示站点：
+
+```text
+https://xiaoyecodes.github.io/AllWeather.Fix/
+```
+
+静态 Demo 支持：
+
+- 页面视觉预览
+- 持仓输入与再平衡计算
+- 仓库内置 JSON 的 ETF K 线展示
+- 仓库内置 JSON 的历史回测
+
+静态 Demo 不支持：
+
+- 后端实时抓取市场情报
+- AI 分析代理接口
+- 本地缺失数据自动写回
+- 通过 `server.js` 动态补全 Yahoo 数据
 
 ## 数据与模型限制
 

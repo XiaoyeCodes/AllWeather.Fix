@@ -1450,6 +1450,20 @@ ${marketContext?.promptText || "市场上下文获取失败；请降低结论置
         }
       }
 
+      async function fetchJsonWithFallback(primaryUrl, fallbackUrl, errorMessage) {
+        try {
+          const response = await fetch(primaryUrl);
+          if (response.ok) return await response.json();
+        } catch {}
+
+        if (fallbackUrl) {
+          const fallbackResponse = await fetch(fallbackUrl);
+          if (fallbackResponse.ok) return await fallbackResponse.json();
+        }
+
+        throw new Error(errorMessage);
+      }
+
       async function loadCandles() {
         const cacheKey = `${candleAsset}:${candleTimeframe}`;
         candleEmpty.classList.remove("hidden");
@@ -1462,9 +1476,14 @@ ${marketContext?.promptText || "市场上下文获取失败；请降低结论置
 
         try {
           if (!candleCache.has(cacheKey)) {
-            const response = await fetch(`/api/candles?asset=${encodeURIComponent(candleAsset)}&timeframe=${encodeURIComponent(candleTimeframe)}`);
-            if (!response.ok) throw new Error("K线行情获取失败");
-            candleCache.set(cacheKey, await response.json());
+            candleCache.set(
+              cacheKey,
+              await fetchJsonWithFallback(
+                `/api/candles?asset=${encodeURIComponent(candleAsset)}&timeframe=${encodeURIComponent(candleTimeframe)}`,
+                `data/candles/${candleAsset}-${candleTimeframe}.json`,
+                "K线行情获取失败"
+              )
+            );
           }
 
           candlePayload = candleCache.get(cacheKey);
@@ -1526,10 +1545,7 @@ ${marketContext?.promptText || "市场上下文获取失败；请降低结论置
         backtestEmpty.classList.remove("hidden");
 
         try {
-          const response = await fetch("/api/backtest-prices");
-          if (!response.ok) throw new Error("历史行情获取失败");
-
-          const payload = await response.json();
+          const payload = await fetchJsonWithFallback("/api/backtest-prices", "data/backtest-prices.json", "历史行情获取失败");
           latestBacktestPayload = payload;
           const monthlyRows = buildMonthlyRows(payload);
           const initialInvestment = readPositiveNumber("backtest-initial");
